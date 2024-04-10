@@ -3,6 +3,7 @@ from pygal.style import Style
 import logging
 import platform
 import webbrowser
+import os
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -49,11 +50,18 @@ def generate_graph(data, chart_type, start_date, end_date, symbol):
     chart.add('Low', lows)
     chart.add('Close', closes)
 
-    # render chart to SVG file
-    file_name = 'stock_chart.svg'
-    chart.render_to_file(file_name)
+       # Define the file path relative to the static directory
+    # Render chart to SVG file
+    file_name = f'{symbol}_{start_date}_to_{end_date}_chart.svg'
+    file_path = os.path.join('static', 'graphs', file_name)  # Full path for file saving
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    chart.render_to_file(file_path)
 
-    # display success message and auto open chart in user's default browser
-    logging.info("Chart generated and displayed successfully.")
-    webbrowser.open(file_name)
+# Log the success
+    logging.info(f"Chart generated and available at {file_path}")
+
+# Return the relative path to the saved file, without 'static/'
+# At the point where you return the relative path to the saved file
+    return os.path.join('graphs', file_name).replace('\\', '/')
+
 
