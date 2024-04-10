@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Data Visualizer</title>
+</head>
+<body>
+    <h1>Stock Data Visualizer</h1>
+    <form action="/" method="post">
+        <div>
+            <label for="symbol">Stock Symbol:</label>
+            <select name="symbol" id="symbol">
+                {% for symbol in stock_symbols %}
+                <option value="{{ symbol }}">{{ symbol }}</option>
+                {% endfor %}
+            </select>        
+        </div>
+        <div>
+            <label>Chart Type:</label>
+            <input type="radio" id="bar" name="chart_type" value="bar" required>
+            <label for="bar">Bar</label>
+            <input type="radio" id="line" name="chart_type" value="line">
+            <label for="line">Line</label>
+        </div>
+        <div>
+            <label for="time_series">Time Series:</label>
+            <select id="time_series" name="time_series" required>
+                <option value="intraday">Intraday</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+        </div>
+        <div>
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" required>
+        </div>
+        <div>
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" required>
+        </div>
+        <div>
+            <input type="submit" value="Generate Chart">
+        </div>
+    </form>
+    
+    <!-- Section for displaying the generated graph -->
+    {% if graph_url %}
+        <h2>Generated Graph</h2>
+        <img src="{{ graph_url }}" alt="Generated Graph">
+    {% endif %}
+</body>
+</html>
