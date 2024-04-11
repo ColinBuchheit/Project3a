@@ -2,51 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Data Visualizer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eaeaea;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            width: 95%; /* Slightly less than full width for some padding */
+            max-width: 1200px; /* Maximum width of the container */
+            align-items: flex-start; /* Align items at the start of the flex container */
+        }
+
+        .form-container, .graph-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin: 10px;
+            flex: 1; /* Flex property to manage width automatically */
+        }
+
+        .form-container {
+            max-width: 40%; /* Limit width for the form container */
+        }
+
+        .graph-container {
+            flex-grow: 2; /* Allows the graph container to take more space */
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .flash-message {
+            padding: 10px;
+            background-color: #ff5252; /* Red */
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        label, select, input[type="date"], button, input[type="submit"], input[type="radio"] + label {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none; /* Borders removed */
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        select, input[type="date"] {
+            border: 1px solid #ccc; /* Restoring border for dropdown and date */
+        }
+
+        input[type="radio"] {
+            display: inline-block;
+            width: auto;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            cursor: pointer;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .svg-container {
+            width: 100%;
+            overflow: hidden; /* Keeps the SVG within the bounds of the container */
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Stock Data Visualizer</h1>
-    <form action="/" method="post">
-        <div>
-            <label for="symbol">Stock Symbol:</label>
-            <select name="symbol" id="symbol">
-                {% for symbol in stock_symbols %}
-                <option value="{{ symbol }}">{{ symbol }}</option>
-                {% endfor %}
-            </select>        
+    <div class="container">
+        <div class="form-container">
+            <h1>Stock Data Visualizer</h1>
+            {% for message in get_flashed_messages() %}
+                <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+            <form action="/" method="post">
+                <div class="form-group">
+                    <label for="symbol">Stock Symbol:</label>
+                    <select name="symbol" id="symbol">
+                        {% for symbol in stock_symbols %}
+                        <option value="{{ symbol }}">{{ symbol }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Chart Type:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="bar" name="chart_type" value="bar" required>
+                        <label for="bar">Bar</label>
+                        <input type="radio" id="line" name="chart_type" value="line">
+                        <label for="line">Line</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="time_series">Time Series:</label>
+                    <select id="time_series" name="time_series" required>
+                        <option value="intraday">Intraday</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" required>
+                </div>
+                <button type="submit">Generate Chart</button>
+            </form>
         </div>
-        <div>
-            <label>Chart Type:</label>
-            <input type="radio" id="bar" name="chart_type" value="bar" required>
-            <label for="bar">Bar</label>
-            <input type="radio" id="line" name="chart_type" value="line">
-            <label for="line">Line</label>
-        </div>
-        <div>
-            <label for="time_series">Time Series:</label>
-            <select id="time_series" name="time_series" required>
-                <option value="intraday">Intraday</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-            </select>
-        </div>
-        <div>
-            <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" required>
-        </div>
-        <div>
-            <label for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" required>
-        </div>
-        <div>
-            <input type="submit" value="Generate Chart">
-        </div>
-    </form>
-    
-    {% if graph_url %}
-        <h2>Generated Graph</h2>
-        <img src="{{ graph_url }}" alt="Generated Graph">
-    {% endif %}
+        
+        {% if graph_svg %}
+            <div class="graph-container">
+                <h2>Generated Graph</h2>
+                <div class="svg-container">{{ graph_svg|safe }}</div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pygal interactivity script -->
+    <script src="https://kozea.github.io/pygal.js/2.0.x/pygal-tooltips.min.js"></script>
 </body>
 </html>

@@ -31,9 +31,9 @@ def preprocess_data(raw_data, start_date, end_date):
             # Fallback to date-only parsing
             date = datetime.strptime(date_str, date_format)
         
-        # Check if the date falls within the specified range
+        #vheck if the date falls within the specified range
         if start_datetime <= date <= end_datetime:
-            # Adapt key lookup to your data structure as needed
+            #adapt key lookup to your data structure as needed
             filtered_data[date_str] = {
                 "Open": details.get("Open") or details.get("1. open"),
                 "High": details.get("High") or details.get("2. high"),
@@ -50,9 +50,9 @@ def main():
     print("Stock Data Visualizer")
     print("---------------------")
 
-    # loop until user chooses to exit
+    #loop until user chooses to exit
     while True:
-        # get stock symbol
+        #get stock symbol
         symbol = getStockSymbol()
 
         # get chart type
