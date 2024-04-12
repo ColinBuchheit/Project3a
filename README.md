@@ -1,5 +1,5 @@
 # Project3
-INFOTC 4320 Project 3: Stock Data Visualizer
+INFOTC 4320 Project 3/3a: Stock Data Visualizer
 
 ## Project Requirements:
 The application should:
@@ -10,6 +10,11 @@ The application should:
    5. Ask the user for the end date in YYYY-MM-DD format.
    6. The end date should not be before the begin date
    7. Generate a graph and open in the user’s default browser.
+
+## 3a Requirments
+  1. Create a flask application for your project
+  2. Write code to populate the form with stock symbols
+  3. Containerize the application using Docker
 
 ## Project Structure Overview:
 
@@ -51,3 +56,21 @@ The application should:
 4. The application fetches data from the Alpha Vantage API using `dataFetcher.py`.
 5. If data is successfully retrieved, it's used to generate graphs.
 6. Any errors or exceptions encountered during the process are appropriately handled and displayed to the user.
+
+## How to run using docker
+Prerequisites
+Before starting, make sure the user has Docker and Docker Compose installed on their machine. 
+- Install Docker
+- Install Docker Compose
+
+Once installing the project from https://github.com/ColinBuchheit/Project3a , open the folder in either a cmd terminal or inside an IDE and run this through the project terminal.  
+
+Run these commands
+
+1. docker-compose up
+automatically build the images if they are not already built and start all services defined in docker-compose.yml.
+  optionally run 'docker-compose up -d' for running Docker Compose in detached mode
+
+2. Open your web browser and go to http://localhost:5000
+
+
